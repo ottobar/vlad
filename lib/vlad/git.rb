@@ -12,7 +12,7 @@ class Vlad::Git
     destination = 'repo' if destination == '.'
     revision = 'HEAD' if revision =~ /head/i
 
-    [ "([ -d #{destination}/.git ] && echo 'existing repo found' || #{git_cmd} clone #{code_repo} #{destination})", 
+    [ "([ -d #{destination}/.git ] && echo 'Existing repository found' || #{git_cmd} clone #{code_repo} #{destination})", 
       "cd #{destination}",
       "#{git_cmd} fetch",
       "#{git_cmd} reset --hard #{revision}",
