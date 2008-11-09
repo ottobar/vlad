@@ -15,7 +15,9 @@ class Vlad::Git
     [ "rm -rf #{destination}",
       "#{git_cmd} clone #{code_repo} #{destination}",
       "cd #{destination}",
-      "#{git_cmd} checkout -f -b deployed-#{revision} #{revision}"
+      "#{git_cmd} checkout -f -b deployed-#{revision} #{revision}",
+      "#{git_cmd} submodule init",
+      "#{git_cmd} submodule update"
     ].join(" && ")
   end
 
