@@ -9,10 +9,10 @@ class Vlad::Git
   # SHA1 or equivalent (e.g. branch, tag, etc...)
 
   def checkout(revision, destination)
-    destination = 'repo' if destination == '.'
+    destination = 'cached-copy' if destination == '.'
     revision = 'HEAD' if revision =~ /head/i
 
-    [ "([ -d #{destination}/.git ] && echo 'Existing repository found' || #{git_cmd} clone #{code_repo} #{destination})", 
+    [ "([ -d #{destination}/.git ] && echo 'Existing repository found' || #{git_cmd} clone #{code_repo} #{destination})",
       "cd #{destination}",
       "#{git_cmd} fetch",
       "#{git_cmd} reset --hard #{revision}",
