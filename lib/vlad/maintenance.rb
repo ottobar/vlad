@@ -1,4 +1,4 @@
-namespace :vlad
+namespace :vlad do
   desc "Remove the maintenance page"
   remote_task :start_web, :roles => [:web] do
     run "if [ -f #{shared_path}/system/maintenance.html ]; then rm -f #{shared_path}/system/maintenance.html; fi"
