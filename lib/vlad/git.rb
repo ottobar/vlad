@@ -14,7 +14,7 @@ class Vlad::Git
 
     [ "([ -d #{destination}/.git ] && echo 'Existing repository found' || #{git_cmd} clone #{code_repo} #{destination})",
       "cd #{destination}",
-      "#{git_cmd} fetch",
+      "#{git_cmd} pull",
       "#{git_cmd} reset --hard #{revision}",
       "#{git_cmd} submodule init",
       "#{git_cmd} submodule update"
