@@ -41,7 +41,9 @@ namespace :vlad do
   remote_task :setup_app, :roles => :app do
     dirs = [deploy_to, releases_path, scm_path, shared_path]
     dirs += %w(config system log pids).map { |d| File.join(shared_path, d) }
-    run "umask 02 && mkdir -p #{dirs.join(' ')}"
+    run [ "umask 02 && mkdir -p #{dirs.join(' ')}",
+          "touch #{shared_path}/config/database.yml"
+        ].join(" && ")
   end
 
   desc "Updates your application server to the latest revision.  Syncs
@@ -61,6 +63,7 @@ namespace :vlad do
             "ln -s #{shared_path}/log #{latest_release}/log",
             "ln -s #{shared_path}/system #{latest_release}/public/system",
             "ln -s #{shared_path}/pids #{latest_release}/tmp/pids",
+            "ln -s #{shared_path}/config/database.yml #{latest_release}/config/database.yml"
           ].join(" && ")
 
       symlink = true
