@@ -12,10 +12,10 @@ class Vlad::Git
     destination = 'repo' if destination == '.'
     revision = 'HEAD' if revision =~ /head/i
 
-    [ "rm -rf #{destination}",
-      "#{git_cmd} clone #{code_repo} #{destination}",
+    [ "([ -d #{destination}/.git ] && echo 'existing repo found' || #{git_cmd} clone #{code_repo} #{destination})", 
       "cd #{destination}",
-      "#{git_cmd} checkout -f -b deployed-#{revision} #{revision}",
+      "#{git_cmd} fetch",
+      "#{git_cmd} reset --hard #{revision}",
       "#{git_cmd} submodule init",
       "#{git_cmd} submodule update"
     ].join(" && ")
