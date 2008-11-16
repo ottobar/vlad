@@ -60,13 +60,12 @@ module Vlad
     options = {:config => options} if String === options
 
     recipes = {
-      :app    => 'merb.god',
       :config => 'config/deploy.rb',
       :core   => :core,
       :scm    => :git,
-      :web    => :maintenance,
+      :app    => :passenger
     }.merge(options)
-    
+
     # be sure core comes first so base tasks aren't clobbered
     if core = recipes.delete(:core)
       require "vlad/#{core}"
