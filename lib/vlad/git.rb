@@ -25,10 +25,8 @@ class Vlad::Git
   # Returns the command that will export +revision+ from the code repo into
   # the directory +destination+.
 
-  def export(revision, destination)
-    revision = 'HEAD' if revision == "."
-
-    [ "cp -R #{revistion} #{destination}",
+  def export(source, destination)
+    [ "cp -R #{source} #{destination}",
       "rm -Rf #{destination}/.git"
     ].join(" && ")
   end
