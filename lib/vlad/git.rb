@@ -28,7 +28,7 @@ class Vlad::Git
   def export(revision, destination)
     revision = 'HEAD' if revision == "."
 
-    [ "cp -R #{revistion} #{destination}"
+    [ "cp -R #{revistion} #{destination}",
       "rm -Rf #{destination}/.git"
     ].join(" && ")
   end
