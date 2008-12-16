@@ -10,13 +10,13 @@ class Vlad::Git
   # SHA1 or equivalent (e.g. branch, tag, etc...)
 
   def checkout(revision, destination)
-    destination = 'repo' if destination == '.'
+    destination = 'cached-copy' if destination == '.'
     revision = 'HEAD' if revision =~ /head/i
 
-    commands = [ "rm -rf #{destination}",
-                 "#{git_cmd} clone #{code_repo} #{destination}",
+    commands = [ "([ -d #{destination}/.git ] && echo 'Existing repository found' || #{git_cmd} clone #{code_repo} #{destination})",
                  "cd #{destination}",
-                 "#{git_cmd} checkout -f -b deployed-#{revision} #{revision}"
+                 "#{git_cmd} fetch",
+                 "#{git_cmd} reset --hard #{revision}"
                ]
 
     if git_enable_submodules
@@ -31,11 +31,9 @@ class Vlad::Git
   # Returns the command that will export +revision+ from the code repo into
   # the directory +destination+.
 
-  def export(revision, destination)
-    revision = 'HEAD' if revision == "."
-
-    [ "mkdir -p #{destination}",
-      "#{git_cmd} archive --format=tar #{revision} | (cd #{destination} && tar xf -)"
+  def export(source, destination)
+    [ "cp -R #{source} #{destination}",
+      "rm -Rf #{destination}/.git"
     ].join(" && ")
   end
 
