@@ -9,6 +9,11 @@ namespace :vlad do
     run "sudo /usr/bin/god restart #{application}"
   end
 
+  desc "start monitor for the application"
+  remote_task :start_monitor, :role => [:app] do
+    run "sudo /usr/bin/god start #{application} -c #{current_path}/config/application_#{merb_env}.god"
+  end
+
   remote_task :symlink_configs, :roles => [:app] do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml && mkdir -p #{release_path}/tmp/cache"
   end

@@ -64,7 +64,8 @@ module Vlad
       :config => 'config/deploy.rb',
       :core   => :core,
       :scm    => :git,
-      :web    => :maintenance,
+      :web    => :no_web,
+      :framework => :merb
     }.merge(options)
     
     # be sure core comes first so base tasks aren't clobbered

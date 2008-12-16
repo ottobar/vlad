@@ -1,0 +1,102 @@
+Example deploy.rb file:
+
+# Using git, merb, merb.god and no_web 
+# (TODO: need a better way to define a stack that is not checked in to the repository) 
+#
+# For a new deployment:
+# - rake [environment] vlad:setup
+# - rake [environment] vlad:update
+# - rake [environment] vlad:setup_configs
+# - rake [environment] vlad:migrate
+# - rake [environment] vlad:start_monitor
+#
+# For redeploys:
+# - rake [environment] vlad:deploy
+#
+set :application, "some-application"
+set :code_repo, "ssh://some.domain.com/path/to/#{application}.git"
+
+task :staging do
+  set :deploy_to, "/path/to/#{application}"
+  set :domain, 'staging.some.domain.com'
+  set :revision, "origin/staging"
+  set :merb_env, 'staging'
+end
+
+task :production do
+  set :deploy_to, "/path/to/#{application}"
+  set :domain, 'some.domain.com'
+  set :revision, "origin/master"
+  set :merb_env, 'production'
+end
+
+
+Example deploy.rake file:
+begin
+  gem 'vlad'
+  require 'vlad'
+rescue LoadError
+  abort "Failed to load vlad"
+end
+Vlad.load
+
+set :framework_configs_setup_via, :copy
+
+
+Example application.god file:
+
+APPLICATION = "some-application"
+APP_ROOT = "/path/to/#{APPLICATION}/current"
+APP_ENVIRONMENT = 'production'
+PROCESS_USER = 'someuser'
+PROCESS_GROUP = 'someuser'
+
+%w{4000 4001 40002 40003}.each do |port|
+  God.watch do |w|
+    pid_path = File.join(APP_ROOT, 'log', "merb.#{port}.pid")
+
+    w.name = "#{APPLICATION}-#{port}"
+    w.interval = 30.seconds # default
+    w.start = "cd #{APP_ROOT}; merb -u #{PROCESS_USER} -G #{PROCESS_USER} -p #{port} -e #{APP_ENVIRONMENT} -d"
+    w.log = "#{APP_ROOT}/log/godmerb.log"
+    w.stop = "cd #{APP_ROOT}; merb -k #{port}"
+    w.restart = "(cd #{APP_ROOT}; merb -k #{port}); sleep 1; cd #{APP_ROOT}; merb -u #{PROCESS_USER} -G #{PROCESS_USER} -p #{port} -e #{APP_ENVIRONMENT} -d"
+    w.start_grace = 5.seconds
+    w.restart_grace = 20.seconds
+    w.pid_file = File.join(APP_ROOT, "log/merb.#{port}.pid")
+    w.group = "#{APPLICATION}"
+    w.behavior(:clean_pid_file)
+
+    w.start_if do |start|
+      start.condition(:process_running) do |c|
+        c.interval = 10.seconds
+        c.running = false
+      end
+    end
+
+    w.restart_if do |restart|
+      restart.condition(:memory_usage) do |c|
+        c.above = 51.megabytes
+        c.times = [3, 5] # 3 out of 5 intervals
+      end
+
+      restart.condition(:cpu_usage) do |c|
+        c.above = 50.percent
+        c.times = 5
+      end
+    end
+
+    w.lifecycle do |on|
+      on.condition(:flapping) do |c|
+        c.to_state = [:start, :restart]
+        c.times = 5
+        c.within = 5.minute
+        c.transition = :unmonitored
+        c.retry_in = 5.minutes
+        c.retry_times = 5
+        c.retry_within = 2.hours
+      end
+    end
+
+  end
+end

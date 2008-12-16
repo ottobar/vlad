@@ -2,6 +2,7 @@ class Vlad::Git
 
   set :source, Vlad::Git.new
   set :git_cmd, "git"
+  set :git_enable_submodules, true
 
   ##
   # Returns the command that will check out +revision+ from the
@@ -12,11 +13,18 @@ class Vlad::Git
     destination = 'repo' if destination == '.'
     revision = 'HEAD' if revision =~ /head/i
 
-    [ "rm -rf #{destination}",
-      "#{git_cmd} clone #{code_repo} #{destination}",
-      "cd #{destination}",
-      "#{git_cmd} checkout -f -b deployed-#{revision} #{revision}"
-    ].join(" && ")
+    commands = [ "rm -rf #{destination}",
+                 "#{git_cmd} clone #{code_repo} #{destination}",
+                 "cd #{destination}",
+                 "#{git_cmd} checkout -f -b deployed-#{revision} #{revision}"
+               ]
+
+    if git_enable_submodules
+      commands << [ "#{git_cmd} submodule -q init",
+                    "#{git_cmd} submodule -q update"
+                  ]
+    end
+    commands.join(" && ")
   end
 
   ##

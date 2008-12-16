@@ -12,16 +12,16 @@ class TestVladGit < VladTestCase
   def test_checkout
     # Checkout to the current directory (which is what the :update task passes)
     cmd = @scm.checkout 'master', '.'
-    assert_equal 'rm -rf repo && git clone git@myhost:/home/john/project1 repo && cd repo && git checkout -f -b deployed-master master', cmd
+    assert_equal 'rm -rf repo && git clone git@myhost:/home/john/project1 repo && cd repo && git checkout -f -b deployed-master master && git submodule -q init && git submodule -q update', cmd
 
     # Mimic :update task
     # 'head' should become HEAD
     cmd = @scm.checkout 'head', '.'
-    assert_equal 'rm -rf repo && git clone git@myhost:/home/john/project1 repo && cd repo && git checkout -f -b deployed-HEAD HEAD', cmd
+    assert_equal 'rm -rf repo && git clone git@myhost:/home/john/project1 repo && cd repo && git checkout -f -b deployed-HEAD HEAD && git submodule -q init && git submodule -q update', cmd
 
     # Checkout to a relative path
     cmd = @scm.checkout 'master', 'some/relative/path'
-    assert_equal 'rm -rf some/relative/path && git clone git@myhost:/home/john/project1 some/relative/path && cd some/relative/path && git checkout -f -b deployed-master master', cmd
+    assert_equal 'rm -rf some/relative/path && git clone git@myhost:/home/john/project1 some/relative/path && cd some/relative/path && git checkout -f -b deployed-master master && git submodule -q init && git submodule -q update', cmd
   end
 
   def test_export
