@@ -27,7 +27,7 @@ class Vlad::Mercurial
   # Returns a command that maps human-friendly revision identifier +revision+
   # into a subversion revision specification.
 
-  def revision(revision)
+  def revision_identifier
     "`hg identify -R #{code_repo} | cut -f1 -d\\ `"
   end
 end

@@ -1,30 +1,30 @@
 require 'vlad'
 
+# :framework should define vlad:migrate and vlad:update_framework tasks
 namespace :vlad do
   set :framework_configs_setup_via, :symlink
-  set :merb_env, 'production'
+  
+  desc "Migrate the application database"
+  remote_task :migrate, :roles => :app do
+    puts "Merb migrate task not yet implemented"
+  end
 
-  desc "Setup configuration files for the framework"
-  remote_task :setup_framework, :roles => [:app] do
+  desc "Updates the framework configuration and working directories after a new release has been exported"
+  remote_task :update_framework, :roles => :app do
+    commands = ["rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids",
+                "mkdir -p #{latest_release}/tmp",
+                "ln -s #{shared_path}/log #{latest_release}/log",
+                "ln -s #{shared_path}/system #{latest_release}/public/system",
+                "ln -s #{shared_path}/pids #{latest_release}/tmp/pids"]
+
     case framework_configs_setup_via
     when :symlink
-      Rake::Task['vlad:symlink_configs'].invoke
+      commands << "ln -nfs #{shared_path}/config/database.yml #{current_path}/config/database.yml"
     when :copy
-      Rake::Task['vlad:copy_configs'].invoke
+      commands << "cp #{current_path}/config/database_#{app_env}.yml #{current_path}/config/database.yml"
     end
-  end
 
-  remote_task :symlink_configs, :roles => [:app] do
-    run "ln -nfs #{shared_path}/config/database.yml #{current_path}/config/database.yml"
-  end
-
-  remote_task :copy_configs, :roles => [:app] do
-    run "cp #{current_path}/config/database_#{merb_env}.yml #{current_path}/config/database.yml"
-  end
-
-  remote_task :migrate, :roles => :app do
-    # TODO: specifiy your ORM or migrator or something and run appropriate task
-    break
+    run commands.join(" && ")
   end
 
 end

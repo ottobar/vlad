@@ -64,7 +64,7 @@ module Vlad
   #     (should define vlad:migrate and vlad:update_framework tasks)
   #
   #     :scm       => :no_scm
-  #     (should define checkout, export and revision instance methods and set :source)
+  #     (should define checkout, export and revision_identifier instance methods and set :source)
   #     
   #     :web       => :no_web
   #     (should define vlad:start_web and vlad:stop_web tasks)

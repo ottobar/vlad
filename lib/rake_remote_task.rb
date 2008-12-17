@@ -413,7 +413,8 @@ class Rake::RemoteTask < Rake::Task
     mandatory :deploy_to,  "deploy path"
     mandatory :domain,     "server domain"
 
-    simple_set(:deploy_timestamped, true,
+    simple_set(:app_env,            'production',
+               :deploy_timestamped, true,
                :deploy_via,         :export,
                :keep_releases,      5,
                :migrate_args,       "",

@@ -26,7 +26,7 @@ class Vlad::Perforce
   # Returns a command that maps human-friendly revision identifier +revision+
   # into a Perforce revision specification.
 
-  def revision(revision)
+  def revision_identifier
     "`#{p4_cmd} changes -s submitted -m 1 ...#{rev_no(revision)} | cut -f 2 -d\\ `"
   end
 

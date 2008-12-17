@@ -26,7 +26,7 @@ class Vlad::Subversion
   # Returns a command that maps human-friendly revision identifier +revision+
   # into a subversion revision specification.
 
-  def revision(revision)
+  def revision_identifier
     "`#{svn_cmd} info #{code_repo} | grep 'Revision:' | cut -f2 -d\\ `"
   end
 end

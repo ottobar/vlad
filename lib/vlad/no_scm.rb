@@ -1,4 +1,4 @@
-# :scm should define checkout, export and revision instance methods and set :source
+# :scm should define checkout, export and revision_identifier instance methods and set :source
 class Vlad::NoScm
   set :source, Vlad::NoScm.new
 
@@ -11,7 +11,7 @@ class Vlad::NoScm
     "mkdir #{destination}"
   end
 
-  def revision(revision)
+  def revision_identifier
     revision
   end
 
