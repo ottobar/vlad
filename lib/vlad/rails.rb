@@ -1,14 +1,10 @@
 require 'vlad'
 
+# :framework should define vlad:db:create, vlad:migrate and vlad:update_framework tasks
 namespace :vlad do
+  set :framework_configs_setup_via, :symlink
 
-  desc "Run the migrate rake task for the the app. By default this is run in
-    the latest app directory.  You can run migrations for the current app
-    directory by setting :migrate_target to :current.  Additional environment
-    variables can be passed to rake via the migrate_env variable.".cleanup
-
-  # No application files are on the DB machine, also migrations should only be
-  # run once.
+  desc "Migrate the database to the latest version"
   remote_task :migrate, :roles => :app do
     break unless target_host == Rake::RemoteTask.hosts_for(:app).first
 
@@ -18,16 +14,34 @@ namespace :vlad do
                 else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
                 end
 
-    run "cd #{current_path}; #{rake_cmd} RAILS_ENV=#{rails_env} db:migrate #{migrate_args}"
+    run "cd #{directory}; #{rake_cmd} RAILS_ENV=#{app_env} db:migrate #{migrate_args}"
   end
 
-  remote_task :setup_framework, :roles => :app do
+  namespace :db do
+    desc "Migrate the database to the latest version"
+    remote_task :create, :roles => :app do
+      break unless target_host == Rake::RemoteTask.hosts_for(:app).first
 
-    run ["rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids",
-            "mkdir -p #{latest_release}/db #{latest_release}/tmp",
-            "ln -s #{shared_path}/log #{latest_release}/log",
-            "ln -s #{shared_path}/system #{latest_release}/public/system",
-            "ln -s #{shared_path}/pids #{latest_release}/tmp/pids"].join(" && ")
+      run "cd #{current_path}; #{rake_cmd} RAILS_ENV=#{app_env} db:create"
+    end
   end
-  
+
+  desc "Updates the framework configuration and working directories after a new release has been exported"
+  remote_task :update_framework, :roles => :app do
+    commands = ["rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids",
+                "mkdir -p #{latest_release}/tmp",
+                "ln -s #{shared_path}/log #{latest_release}/log",
+                "ln -s #{shared_path}/system #{latest_release}/public/system",
+                "ln -s #{shared_path}/pids #{latest_release}/tmp/pids"]
+
+    case framework_configs_setup_via
+    when :symlink
+      commands << "ln -nfs #{shared_path}/config/database.yml #{current_path}/config/database.yml"
+    when :copy
+      commands << "cp #{current_path}/config/database_#{app_env}.yml #{current_path}/config/database.yml"
+    end
+
+    run commands.join(" && ")
+  end
+
 end

@@ -15,6 +15,7 @@ $TESTING ||= false
 # - rake vlad:setup
 # - rake vlad:upload_config FILES=database.yml
 # - rake vlad:update
+# - rake vlad:db:create
 # - rake vlad:migrate
 # - rake vlad:start:first_time
 #
@@ -61,7 +62,7 @@ module Vlad
   #     vlad:cleanup, vlad:deploy, and vlad:deploy:migrations tasks)
   #
   #     :framework => :no_framework
-  #     (should define vlad:migrate and vlad:update_framework tasks)
+  #     (should define vlad:db:create, vlad:migrate and vlad:update_framework tasks)
   #
   #     :scm       => :no_scm
   #     (should define checkout, export and revision_identifier instance methods and set :source)
