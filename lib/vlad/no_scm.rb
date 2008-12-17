@@ -3,8 +3,7 @@ class Vlad::NoScm
   set :source, Vlad::NoScm.new
 
   def checkout(revision, destination)
-    puts "Nothing to do to checkout the source code"
-    "echo ''"
+    "echo 'Nothing to do to checkout the source code'"
   end
 
   def export(source, destination)
