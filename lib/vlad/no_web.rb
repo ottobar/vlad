@@ -1,14 +1,15 @@
 require 'vlad'
 
+# :web should define vlad:start_web and vlad:stop_web tasks
 namespace :vlad do
-  desc "(Re)Start the web and app servers"
-  remote_task :start do
-    Rake::Task['vlad:start_app'].invoke
+  desc "Restart the web and app servers"
+  remote_task :start_web, :roles => :web do
+    run "echo 'Nothing to do to restart the web server'"
   end
 
-  desc "Stop the web and app servers"
-  remote_task :stop do
-    Rake::Task['vlad:stop_app'].invoke
+  desc "Stop the web servers"
+  remote_task :stop_web, :roles => :web do
+    run "echo 'Nothing to do to stop the web server'"
   end
   
 end

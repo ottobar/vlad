@@ -11,11 +11,19 @@ $TESTING ||= false
 #
 # === Basic scenario:
 #
-# 1. rake vlad:setup   (first time only)
-# 2. rake vlad:update
-# 3. rake vlad:migrate (optional)
-# 4. rake vlad:start
-
+# For a new deployment:
+# - rake vlad:setup
+# - rake vlad:upload_config FILES=database.yml
+# - rake vlad:update
+# - rake vlad:migrate
+# - rake vlad:start:first_time
+#
+# For redeploys:
+# - rake vlad:deploy
+#   (runs vlad:stop, vlad:update, vlad:start, vlad:cleanup)
+# - rake vlad:deploy:migrations
+#   (runs vlad:stop, vlad:update, vlad:migrate, vlad:start, vlad:cleanup)
+#
 module Vlad
 
   ##
@@ -42,11 +50,24 @@ module Vlad
   # Loads tasks file +tasks_file+ and various recipe styles as a hash
   # of category/style pairs. Recipes default to:
   #
-  #     :app    => :mongrel
-  #     :config => 'config/deploy.rb'
-  #     :core   => :core
-  #     :scm    => :subversion
-  #     :web    => :apache
+  #     :app       => :no_app
+  #     (should define vlad:start_app, vlad:stop_app, vlad:start_app:first_time tasks)
+  #
+  #     :config    => 'config/deploy.rb'
+  #     (should set :application, :code_repo, and :domain)
+  #
+  #     :core      => :core
+  #     (should define vlad:setup, vlad:update, vlad:start, vlad:stop, vlad:start:first_time,
+  #     vlad:cleanup, vlad:deploy, and vlad:deploy:migrations tasks)
+  #
+  #     :framework => :no_framework
+  #     (should define vlad:migrate and vlad:update_framework tasks)
+  #
+  #     :scm       => :no_scm
+  #     (should define checkout, export and revision instance methods and set :source)
+  #     
+  #     :web       => :no_web
+  #     (should define vlad:start_web and vlad:stop_web tasks)
   #
   # You can override individual values and/or set to nil to
   # deactivate. :config will get loaded last to ensure that user
@@ -60,12 +81,12 @@ module Vlad
     options = {:config => options} if String === options
 
     recipes = {
-      :app    => 'merb.god',
-      :config => 'config/deploy.rb',
-      :core   => :core,
-      :scm    => :git,
-      :web    => :no_web,
-      :framework => :merb
+      :app       => :no_app,
+      :config    => 'config/deploy.rb',
+      :core      => :core,
+      :framework => :no_framework,
+      :scm       => :no_scm,
+      :web       => :no_web
     }.merge(options)
     
     # be sure core comes first so base tasks aren't clobbered

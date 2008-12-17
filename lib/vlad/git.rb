@@ -1,5 +1,5 @@
 class Vlad::Git
-
+  set :revision, "origin/master"
   set :source, Vlad::Git.new
   set :git_cmd, "git"
   set :git_enable_submodules, true

@@ -1,5 +1,5 @@
 class Vlad::Subversion
-
+  set :revision, "head"
   set :source, Vlad::Subversion.new
   set :svn_cmd, "svn"
 

@@ -1,5 +1,5 @@
 class Vlad::Perforce
-
+  set :revision, "head"
   set :p4_cmd, "p4"
   set :source, Vlad::Perforce.new
 

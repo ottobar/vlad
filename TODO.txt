@@ -1,0 +1,21 @@
+- Have a way to define your default stack rather than on Vlad.load rather than
+  having it checked into git
+  (perhaps not have a default stack and only define on load).
+
+- What I want is to have the same deployment tasks for any application, whether
+  it is a rails, merb, or standalone ruby app, etc., using activerecord,
+  datamapper, etc., and running via passenger, mongrel, god, daemonize,
+  whatever. It would look like this:
+
+# For a new deployment:
+# - rake vlad:setup
+# - rake vlad:upload_config FILES=database.yml
+# - rake vlad:update
+# - rake vlad:migrate
+# - rake vlad:start:first_time
+#
+# For redeploys:
+# - rake vlad:deploy
+#   (runs vlad:stop, vlad:update, vlad:start, vlad:cleanup)
+# - rake vlad:deploy:migrations
+#   (runs vlad:stop, vlad:update, vlad:migrate, vlad:start, vlad:cleanup)

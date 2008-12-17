@@ -1,5 +1,5 @@
 class Vlad::Mercurial
-
+  set :revision, "head"
   set :source, Vlad::Mercurial.new
 
   ##

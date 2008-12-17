@@ -4,16 +4,8 @@ namespace :vlad do
   set :framework_configs_setup_via, :symlink
   set :merb_env, 'production'
 
-  desc "Deploy the application and cleanup old versions"
-  remote_task :deploy => [ 'vlad:update', 'vlad:setup_configs', 'vlad:start', 'vlad:cleanup']
-
-  namespace :deploy do
-    desc "Deploy the application with migrations and cleanup old versions"
-    remote_task :migrations => [ 'vlad:update', 'vlad:setup_configs', 'vlad:migrate', 'vlad:start', 'vlad:cleanup']
-  end
-
   desc "Setup configuration files for the framework"
-  remote_task :setup_configs, :roles => [:app] do
+  remote_task :setup_framework, :roles => [:app] do
     case framework_configs_setup_via
     when :symlink
       Rake::Task['vlad:symlink_configs'].invoke
