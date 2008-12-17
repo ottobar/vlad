@@ -32,9 +32,7 @@ class Vlad::Git
   # the directory +destination+.
 
   def export(source, destination)
-    [ "cp -R #{source} #{destination}",
-      "rm -Rf #{destination}/.git"
-    ].join(" && ")
+    "rsync -a -f '- .git' #{source}/ #{destination}"
   end
 
   ##
