@@ -11,12 +11,12 @@ class Vlad::Git
 
   def checkout(revision, destination)
     destination = 'cached-copy' if destination == '.'
-    revision = 'HEAD' if revision =~ /head/i
+    git_revision = revision =~ /head/i ? 'HEAD' : revision
 
     commands = [ "([ -d #{destination}/.git ] && echo 'Existing repository found' || #{git_cmd} clone #{code_repo} #{destination})",
                  "cd #{destination}",
                  "#{git_cmd} fetch",
-                 "#{git_cmd} reset --hard #{revision}"
+                 "#{git_cmd} reset --hard #{git_revision}"
                ]
 
     if git_enable_submodules
@@ -32,10 +32,10 @@ class Vlad::Git
   # the directory +destination+.
 
   def export(source, destination)
-    revision = 'HEAD' if revision =~ /head/i
+    git_revision = revision =~ /head/i ? 'HEAD' : revision
 
     [ "mkdir -p #{destination}",
-      "#{git_cmd} archive --format=tar #{revision} | (cd #{destination} && tar xf -)"
+      "#{git_cmd} archive --format=tar #{git_revision} | (cd #{destination} && tar xf -)"
     ].join(" && ")
   end
 
@@ -43,9 +43,10 @@ class Vlad::Git
   # Returns a command that maps human-friendly revision identifier +revision+
   # into a git SHA1.
 
-  def revision(revision)
-    revision = 'HEAD' if revision =~ /head/i
+  def revision_identifier
+    git_revision = revision =~ /head/i ? 'HEAD' : revision
 
-    "`#{git_cmd} rev-parse #{revision}`"
+    "`cd #{scm_path}/cached-copy && #{git_cmd} rev-parse #{git_revision}`"
   end
+
 end

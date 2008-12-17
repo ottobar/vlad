@@ -73,7 +73,7 @@ namespace :vlad do
   remote_task :update_symlink, :roles => :app do
     begin
       run "rm -f #{current_path} && ln -s #{latest_release} #{current_path}"
-      run "echo #{now} $USER #{revision} #{File.basename release_path} >> #{deploy_to}/revisions.log"
+      run "echo #{now} $USER #{source.revision_identifier} #{File.basename release_path} >> #{deploy_to}/revisions.log"
     rescue => e
       run "rm -f #{current_path} && ln -s #{previous_release} #{current_path}"
       raise e
