@@ -4,7 +4,7 @@ class Vlad::NoScm
 
   def checkout(revision, destination)
     puts "Nothing to do to checkout the source code"
-    ""
+    "echo ''"
   end
 
   def export(source, destination)
