@@ -2,7 +2,7 @@ require 'vlad'
 
 # :app should define vlad:start_app, vlad:stop_app, vlad:start_app:first_time tasks
 namespace :vlad do
-  set :appliction, 'application'
+  set :application, 'application'
   set :app_env, 'production'
   
   remote_task :stop_app, :roles => :app do
