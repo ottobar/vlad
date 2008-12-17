@@ -32,8 +32,10 @@ class Vlad::Git
   # the directory +destination+.
 
   def export(source, destination)
-    [ "cp -R #{source} #{destination}",
-      "rm -Rf #{destination}/.git"
+    revision = 'HEAD' if revision =~ /head/i
+
+    [ "mkdir -p #{destination}",
+      "#{git_cmd} archive --format=tar #{revision} | (cd #{destination} && tar xf -)"
     ].join(" && ")
   end
 
