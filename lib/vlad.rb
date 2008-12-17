@@ -12,18 +12,21 @@ $TESTING ||= false
 # === Basic scenario:
 #
 # For a new deployment:
-# - rake vlad:setup
-# - rake vlad:upload_config FILES=database.yml
-# - rake vlad:update
-# - rake vlad:db:create
-# - rake vlad:migrate
-# - rake vlad:start:first_time
+# - $ rake vlad:setup
+# - $ rake vlad:upload_config FILES=database.yml
+# - $ rake vlad:update
+# - $ rake vlad:db:create
+# - $ rake vlad:db:migrate
+# - $ rake vlad:db:seed
+# - $ rake vlad:start_app:first_time
+# - configure the web server(s) as needed
+# - $ rake vlad:start_web:first_time
 #
 # For redeploys:
-# - rake vlad:deploy
+# - $ rake vlad:deploy
 #   (runs vlad:stop, vlad:update, vlad:start, vlad:cleanup)
-# - rake vlad:deploy:migrations
-#   (runs vlad:stop, vlad:update, vlad:migrate, vlad:start, vlad:cleanup)
+# - $ rake vlad:deploy:migrations
+#   (runs vlad:stop, vlad:update, vlad:db:migrate, vlad:start, vlad:cleanup)
 #
 module Vlad
 
@@ -58,17 +61,17 @@ module Vlad
   #     (should set :application, :code_repo, and :domain)
   #
   #     :core      => :core
-  #     (should define vlad:setup, vlad:update, vlad:start, vlad:stop, vlad:start:first_time,
+  #     (should define vlad:setup, vlad:update, vlad:start, vlad:stop, 
   #     vlad:cleanup, vlad:deploy, and vlad:deploy:migrations tasks)
   #
   #     :framework => :no_framework
-  #     (should define vlad:db:create, vlad:migrate and vlad:update_framework tasks)
+  #     (should define vlad:db:create, vlad:db:migrate, vlad:db:seed and vlad:update_framework tasks)
   #
   #     :scm       => :no_scm
   #     (should define checkout, export and revision_identifier instance methods and set :source)
   #     
   #     :web       => :no_web
-  #     (should define vlad:start_web and vlad:stop_web tasks)
+  #     (should define vlad:start_web, vlad:stop_web and vlad:start_web:first_time tasks)
   #
   # You can override individual values and/or set to nil to
   # deactivate. :config will get loaded last to ensure that user

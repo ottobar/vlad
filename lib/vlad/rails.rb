@@ -1,21 +1,8 @@
 require 'vlad'
 
-# :framework should define vlad:db:create, vlad:migrate and vlad:update_framework tasks
+# :framework should define vlad:db:create, vlad:db:migrate and vlad:update_framework tasks
 namespace :vlad do
   set :framework_configs_setup_via, :symlink
-
-  desc "Migrate the database to the latest version"
-  remote_task :migrate, :roles => :app do
-    break unless target_host == Rake::RemoteTask.hosts_for(:app).first
-
-    directory = case migrate_target.to_sym
-                when :current then current_path
-                when :latest  then current_release
-                else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
-                end
-
-    run "cd #{directory}; #{rake_cmd} RAILS_ENV=#{app_env} db:migrate #{migrate_args}"
-  end
 
   namespace :db do
     desc "Migrate the database to the latest version"
@@ -23,6 +10,26 @@ namespace :vlad do
       break unless target_host == Rake::RemoteTask.hosts_for(:app).first
 
       run "cd #{current_path}; #{rake_cmd} RAILS_ENV=#{app_env} db:create"
+    end
+
+    desc "Migrate the database to the latest version"
+    remote_task :migrate, :roles => :app do
+      break unless target_host == Rake::RemoteTask.hosts_for(:app).first
+
+      directory = case migrate_target.to_sym
+                  when :current then current_path
+                  when :latest  then current_release
+                  else raise ArgumentError, "unknown migration target #{migrate_target.inspect}"
+                  end
+
+      run "cd #{directory}; #{rake_cmd} RAILS_ENV=#{app_env} db:migrate #{migrate_args}"
+    end
+
+    desc "Load seed data into application database"
+    remote_task :seed, :roles => :app do
+      break unless target_host == Rake::RemoteTask.hosts_for(:app).first
+
+      run "cd #{current_path}; #{rake_cmd} RAILS_ENV=#{app_env} db:seed"
     end
   end
 

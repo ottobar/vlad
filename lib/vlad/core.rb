@@ -201,7 +201,7 @@ namespace :vlad do
 
   namespace :deploy do
     desc "Deploy the application with migrations and cleanup old versions"
-    remote_task :migrations => [ 'vlad:stop', 'vlad:update', 'vlad:migrate', 'vlad:start', 'vlad:cleanup']
+    remote_task :migrations => [ 'vlad:stop', 'vlad:update', 'vlad:db:migrate', 'vlad:start', 'vlad:cleanup']
   end
 
 end # namespace vlad
