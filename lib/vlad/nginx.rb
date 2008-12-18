@@ -9,13 +9,13 @@ namespace :vlad do
   desc "(Re)Start the web servers"
 
   remote_task :start_web, :roles => :web  do
-    run "#{web_command} restart"
+    run "sudo #{web_command} restart"
   end
 
   desc "Stop the web servers"
 
   remote_task :stop_web, :roles => :web  do
-    run "#{web_command} stop"
+    run "sudo #{web_command} stop"
   end
 
   ##
