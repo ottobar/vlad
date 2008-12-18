@@ -32,8 +32,8 @@ configuration is set via the thin_* variables.".cleanup
            "-e #{thin_environment}",
            "-c #{current_path}",
            "-C #{thin_conf}",
-           ("-a #{thin_address}" if thin_address)
-           ("-R #{thin_rackup}" if thin_rackup )
+           ("-a #{thin_address}" if thin_address),
+           ("-R #{thin_rackup}" if thin_rackup ),
            ("-P #{thin_pid_file}" if thin_pid_file),
            ("-l #{thin_log_file}" if thin_log_file),
            ("--user #{thin_user}" if thin_user),
